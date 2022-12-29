@@ -1,10 +1,24 @@
 - name: "Apache install using docker"
   hosts: prod
   become: true
+  pre_tasks:
+    - name: Install packages
+      ansible.builtin.package: name='{{ item }}' state=present
+      when: ansible_distribution == "Rocky"
+      loop:
+        - wget
+        - git
+
   tasks:
+    - name: Copy Website file template
+      ansible.builtin.template:
+        src: index.html.j2
+        dest: /home/james/index.html
     - name: Create an Apache container
       community.docker.docker_container:
         name: webapp
         image: httpd
         ports:
           - "80:80"
+        volumes:
+          - /home/james/index.html:/usr/local/apache2/htdocs/index.html
