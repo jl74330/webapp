@@ -1,0 +1,10 @@
+- name: "Apache install using docker"
+  hosts: prod
+  become: true
+  tasks:
+    - name: Create an Apache container
+      community.docker.docker_container:
+        name: webapp
+        image: httpd
+        ports:
+          - "80:80"
